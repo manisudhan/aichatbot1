@@ -1,0 +1,26 @@
+from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
+
+# Load the model and tokenizer
+model_name = "facebook/m2m100_418M"
+model = M2M100ForConditionalGeneration.from_pretrained(model_name)
+tokenizer = M2M100Tokenizer.from_pretrained(model_name)
+
+# Set the source and target languages
+source_language = "en"  # English
+target_language = "fr"  # French
+
+# Input text to be translated
+text = "Hello, how are you?"
+
+# Tokenize the text and set the source language
+tokenizer.src_lang = source_language
+encoded_input = tokenizer(text, return_tensors="pt")
+
+# Generate the translation
+generated_tokens = model.generate(**encoded_input, forced_bos_token_id=tokenizer.get_lang_id(target_language))
+
+# Decode the translated text
+translated_text = tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
+
+print(f"Original Text: {text}")
+print(f"Translated Text: {translated_text}")
